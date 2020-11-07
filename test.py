@@ -22,45 +22,42 @@ from tkinter import filedialog as fd
 # open_file_button.bind('<Button-1>', open_directory)
 
 url = 'http://odeku.edu.ua/language/en/osenu-2/'
-# page = urllib.request.urlopen(url)
-# soup = BeautifulSoup(page.read(),'lxml')
-# # links = soup.findAll('a', attrs={'href': re.compile("http://" or "https://")})
-# # # links = soup.find_all('a', attrs={'a': 'href'})
-# print( str(soup))
-# print(links)
-# for link in links:
-#     response = requests.get(link)
-#     soup1 = BeautifulSoup(response.text, 'lxml')
-#     # page = urllib.request.urlopen(link)
-#     # soup1 = BeautifulSoup(page.read())
-#     newlink = soup1.findAll('a', attrs={'href': re.compile("http://" or "https://")})
-#     print(newlink)
 
 
 def recursive_url(url, depth):
+    newlink = []
     if depth == 2:
         return url
     else:
         page = urllib.request.urlopen(url)
         soup = BeautifulSoup(page.read(), 'lxml')
-        newlink = soup.find_all('a', attrs={'href': re.compile("http://")},limit=2)
-        for link in newlink:
-            if len(link.get('href')) == 0:
-                return url
-            else:
-                return url, recursive_url(link.get('href'), depth + 1)
+        #newlink = soup.find_all('a', limit=2)
+        for link in soup.find_all('a', limit=2):
+             #newlink.append(link.get('href'))
+             print(link.get('href'))
+             return link.get('href'), recursive_url(link.get('href'), depth + 1)
+        #     #a_link = str(link.get('href'))
+        #     if len(link.get('href')) == 0:
+        #         return link.get('href')
+        #     else:
+        #         return link.get('href')
+        #             #, recursive_url(link.get('href'), depth + 1)
 
 
 def getLinks(url):
+    links = []
     page = urllib.request.urlopen(url)
     soup = BeautifulSoup(page.read(), 'lxml')
-    #print(soup.a)
-    links = soup.find_all('a', attrs={'href': re.compile("http://")},limit=2)
-    for link in links:
-        #print(link.get('href'))
+    #links = soup.find_all('a', limit=3)
+    #print(links)
+    for link in soup.find_all('a', limit=3):
+        #recursive_url(link.get('href'), 0)
         links.append(recursive_url(link.get('href'), 0))
+        #print(link)
+        #links.append(link)
     return links
-print(getLinks(url))
+getLinks(url)
+#print(getLinks(url))
 
 # def start(event):
 #     print('ok')
