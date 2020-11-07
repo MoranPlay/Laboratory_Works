@@ -48,6 +48,7 @@ def getLinks(url):
     links = []
     page = urllib.request.urlopen(url)
     soup = BeautifulSoup(page.read(), 'lxml')
+
     #links = soup.find_all('a', limit=3)
     #print(links)
     for link in soup.find_all('a', limit=3):

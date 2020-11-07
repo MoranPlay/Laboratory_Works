@@ -68,3 +68,9 @@ links_entry.pack()
 open_file_button.pack()
 start_button.pack()
 root.mainloop()
+
+
+# resource = urllib.urlopen(img)
+# out = open("...\img.jpg", 'wb')
+# out.write(resource.read())
+# out.close()
