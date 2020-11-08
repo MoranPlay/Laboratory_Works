@@ -1,6 +1,6 @@
 import re
 from urllib.parse import urlparse
-
+from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import urllib.request
 from tkinter import *
@@ -15,6 +15,8 @@ links_entry = Entry(root, width=50)
 open_file_button = Button(root, text='Выберите директорию')
 start_button = Button(root, text='Стартуем!')
 
+directory = ''
+
 def openDirectory(event):
     global directory
     directory = fd.askdirectory()
@@ -23,15 +25,7 @@ def openDirectory(event):
 open_file_button.bind('<Button-1>', openDirectory)
 
 url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
-# page = urllib.request.urlopen(url)
-# soup = BeautifulSoup(page.read(), 'lxml')
-# for link in soup.find_all('img', attrs={'src': re.compile(".png")}):
-#         print(link.get('src'))
-img = 'https://client.antagene.com/sites/all/themes/antagene/logo2_en.png'
-resource = urllib.request.urlopen(img)
-out = open("D:/Магистратура, чёрт побери/КІБЕРБЕЗПЕКА ТА УПРАВЛІННЯ ЗАХИСТОМ ІНФОРМАЦІЙНИХ СИСТЕМ/Лаб 7 Кириловский/img.png", 'wb')
-out.write(resource.read())
-out.close()
+
 
 def recursiveUrl(url, depth):
     if depth == 4:
@@ -65,6 +59,16 @@ def getLinks(url):
     return links
 
 def start(event):
+    page = urllib.request.urlopen(url)
+    soup = BeautifulSoup(page.read(), 'lxml')
+    for link in soup.find_all('img'):
+        webpage_url = url
+        src = link.get('src')
+        new_url = urljoin(webpage_url, src)
+        resource = urllib.request.urlopen(new_url)
+        out = open(directory + "/" + new_url.split("/")[-1], 'wb')
+        out.write(resource.read())
+        out.close()
     print(getLinks(url))
 
 start_button.bind('<Button-1>', start)
