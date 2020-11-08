@@ -1,11 +1,10 @@
-import re
 from urllib.parse import urlparse
 from urllib.parse import urljoin
 from bs4 import BeautifulSoup
 import urllib.request
 from tkinter import *
 from tkinter import filedialog as fd
-import requests
+
 root = Tk()
 url_label = Label(root, text='Введите url адрес')
 url_entry = Entry(root, width=50)
@@ -28,11 +27,17 @@ def get_image(soup, url):
     for link in soup.find_all('img'):
         webpage_url = url
         src = link.get('src')
-        new_url = urljoin(webpage_url, src)
-        resource = urllib.request.urlopen(new_url)
-        out = open(directory + "/" + new_url.split("/")[-1].split("?")[0], 'wb')
-        out.write(resource.read())
-        out.close()
+        if(src.startswith('http://')):
+            resource = urllib.request.urlopen(src)
+            out = open(directory + "/" + src.split("/")[-1].split("?")[0], 'wb')
+            out.write(resource.read())
+            out.close()
+        else:
+            new_url = urljoin(webpage_url, src)
+            resource = urllib.request.urlopen(new_url)
+            out = open(directory + "/" + new_url.split("/")[-1].split("?")[0], 'wb')
+            out.write(resource.read())
+            out.close()
 
 def recursiveUrl(url, depth):
     if depth == 2:
@@ -43,12 +48,16 @@ def recursiveUrl(url, depth):
         output = open(directory + '/' + urlparse(url).hostname + '.html', 'w', encoding='utf-8')
         output.write(str(soup))
         get_image(soup, url)
-        newlink = soup.findAll('a', attrs={'href': re.compile("http://")}, limit=3)
+        newlink = soup.findAll('a', attrs={'href': re.compile("")}, limit=3)
         if len(newlink) == 0:
             return url
         else:
             for link in newlink:
-                return recursiveUrl(link.get('href'), depth + 1)
+                new_url_link = link.get('href')
+                if (new_url_link.startswith('http://')):
+                    return recursiveUrl(new_url_link, depth + 1)
+                else:
+                    return recursiveUrl(urljoin(url, new_url_link), depth + 1)
 
 
 def getLinks(url):
@@ -58,8 +67,13 @@ def getLinks(url):
     output = open(directory + '/' + urlparse(url).hostname + '.html', 'w', encoding='utf-8')
     output.write(str(soup))
     get_image(soup, url)
-    for link in soup.findAll('a', attrs={'href': re.compile("http://")}, limit=3):
-        links.append(recursiveUrl(link.get('href'), 0))
+    for link in soup.findAll('a', attrs={'href': re.compile("")}, limit=5):
+        new_url_link = link.get('href')
+        #print(new_url_link)
+        if (new_url_link.startswith('http://')):
+            links.append(recursiveUrl(new_url_link, 0))
+        else:
+            links.append(recursiveUrl(urljoin(url, new_url_link), 0))
     return links
 
 def start(event):
