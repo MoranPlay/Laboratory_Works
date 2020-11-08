@@ -16,29 +16,34 @@ open_file_button = Button(root, text='Выберите директорию')
 start_button = Button(root, text='Стартуем!')
 
 directory = ''
+url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
 
 def openDirectory(event):
     global directory
     directory = fd.askdirectory()
 
-
 open_file_button.bind('<Button-1>', openDirectory)
 
-url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
-
+def get_image(soup, url):
+    for link in soup.find_all('img'):
+        webpage_url = url
+        src = link.get('src')
+        new_url = urljoin(webpage_url, src)
+        resource = urllib.request.urlopen(new_url)
+        out = open(directory + "/" + new_url.split("/")[-1].split("?")[0], 'wb')
+        out.write(resource.read())
+        out.close()
 
 def recursiveUrl(url, depth):
-    if depth == 4:
+    if depth == 2:
         return url
     else:
         page = urllib.request.urlopen(url)
         soup = BeautifulSoup(page.read(), 'lxml')
         output = open(directory + '/' + urlparse(url).hostname + '.html', 'w', encoding='utf-8')
         output.write(str(soup))
-        newlink = soup.findAll('a', attrs={'href': re.compile("http://")})
-        # print("recursive")
-        # print(newlink)
-
+        get_image(soup, url)
+        newlink = soup.findAll('a', attrs={'href': re.compile("http://")}, limit=3)
         if len(newlink) == 0:
             return url
         else:
@@ -52,23 +57,12 @@ def getLinks(url):
     soup = BeautifulSoup(page.read(), 'lxml')
     output = open(directory + '/' + urlparse(url).hostname + '.html', 'w', encoding='utf-8')
     output.write(str(soup))
-    #print(soup)
-    #links = soup.find_all('a', limit=3)
-    for link in soup.findAll('a', attrs={'href': re.compile("http://")}):
+    get_image(soup, url)
+    for link in soup.findAll('a', attrs={'href': re.compile("http://")}, limit=3):
         links.append(recursiveUrl(link.get('href'), 0))
     return links
 
 def start(event):
-    page = urllib.request.urlopen(url)
-    soup = BeautifulSoup(page.read(), 'lxml')
-    for link in soup.find_all('img'):
-        webpage_url = url
-        src = link.get('src')
-        new_url = urljoin(webpage_url, src)
-        resource = urllib.request.urlopen(new_url)
-        out = open(directory + "/" + new_url.split("/")[-1], 'wb')
-        out.write(resource.read())
-        out.close()
     print(getLinks(url))
 
 start_button.bind('<Button-1>', start)
@@ -80,10 +74,3 @@ links_entry.pack()
 open_file_button.pack()
 start_button.pack()
 root.mainloop()
-
-# page = urllib.request.urlopen(link.get('href'))
-#         soup1 = BeautifulSoup(page.read(), 'lxml')
-#         for link1 in soup1.find_all('a', limit=2)[1:]:
-#             print(link1)
-#             links.append(recursiveUrl(link1.get('href'), 0))
-#         #print(link.get('href'))
