@@ -4,8 +4,10 @@ from bs4 import BeautifulSoup
 import urllib.request
 from tkinter import *
 from tkinter import filedialog as fd
-
+from datetime import datetime
 root = Tk()
+
+time_label = Label(root, text='')
 url_label = Label(root, text='Введите url адрес')
 url_entry = Entry(root, width=50)
 
@@ -77,10 +79,13 @@ def getLinks(url):
     return links
 
 def start(event):
+    time_label['text'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print(getLinks(url))
 
 start_button.bind('<Button-1>', start)
 
+time_label.pack()
 url_label.pack()
 url_entry.pack()
 links_label.pack()
