@@ -25,7 +25,7 @@ file_extension_button = Button(root, text='Поиск')
 
 time_label['text'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 directory = ''
-url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
+#url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
 
 
 def openDirectory(event):
@@ -71,7 +71,6 @@ def recursiveUrl(url, depth):
 
 
 def getLinks(url):
-    links = [url]
     page = urllib.request.urlopen(url)
     soup = BeautifulSoup(page.read(), 'lxml')
     get_image(soup, url)
@@ -79,16 +78,15 @@ def getLinks(url):
     output.write(get_image(soup, url))
     for link in soup.findAll('a', attrs={'href': re.compile(urlparse(url).hostname + "/")}, limit=5):
         new_url_link = link.get('href')
-        # links.append(recursiveUrl(new_url_link, 0))
         if new_url_link.startswith('http://'):
-            links.append(recursiveUrl(new_url_link, 0))
+            recursiveUrl(new_url_link, 0)
         else:
-            links.append(recursiveUrl(urljoin(url, new_url_link), 0))
-    return links
+            recursiveUrl(urljoin(url, new_url_link), 0)
+
 
 def start(event):
     if (depth_entry.get() != ''):
-        getLinks(url)
+        getLinks(url_entry.get())
     else:
         depth_label['text'] = 'НАПИСАНО ЖЕ Введите глубину анализа ссылок'
 
