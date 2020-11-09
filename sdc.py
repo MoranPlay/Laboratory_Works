@@ -5,6 +5,7 @@ import urllib.request
 from tkinter import *
 from tkinter import filedialog as fd
 from datetime import datetime
+
 root = Tk()
 
 time_label = Label(root, text='')
@@ -16,6 +17,7 @@ links_entry = Entry(root, width=50)
 open_file_button = Button(root, text='Выберите директорию')
 start_button = Button(root, text='Стартуем!')
 
+time_label['text'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 directory = ''
 url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
 
@@ -56,7 +58,7 @@ def recursiveUrl(url, depth):
         else:
             for link in newlink:
                 new_url_link = link.get('href')
-                if (new_url_link.startswith('http://')):
+                if new_url_link.startswith('http://'):
                     return recursiveUrl(new_url_link, depth + 1)
                 else:
                     return recursiveUrl(urljoin(url, new_url_link), depth + 1)
@@ -71,16 +73,13 @@ def getLinks(url):
     get_image(soup, url)
     for link in soup.findAll('a', attrs={'href': re.compile("")}, limit=5):
         new_url_link = link.get('href')
-        #print(new_url_link)
-        if (new_url_link.startswith('http://')):
+        if new_url_link.startswith('http://'):
             links.append(recursiveUrl(new_url_link, 0))
         else:
             links.append(recursiveUrl(urljoin(url, new_url_link), 0))
     return links
 
 def start(event):
-    time_label['text'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     print(getLinks(url))
 
 start_button.bind('<Button-1>', start)
