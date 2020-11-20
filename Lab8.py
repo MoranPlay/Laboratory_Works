@@ -50,7 +50,6 @@ def decode(event):
     else:
         iv = Random.new().read(16)
     cipher = AES.new(key, AES.MODE_CFB, iv)
-    cipher = AES.new(key, AES.MODE_CFB, iv)
     with open(path, 'rb') as f, open(
             'D:\\Магистратура, чёрт побери\\КІБЕРБЕЗПЕКА ТА УПРАВЛІННЯ ЗАХИСТОМ ІНФОРМАЦІЙНИХ СИСТЕМ\\Лаб 8 Кириловский\\virus1.txt',
             'wb') as f1:
