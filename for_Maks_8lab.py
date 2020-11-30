@@ -33,7 +33,7 @@ def start(event):
         iv = Random.new().read(16)
     cipher = AES.new(key, AES.MODE_OFB, iv)
     with open('D:\\for_me\\file_saved\\file.txt', 'rb') as f, open('D:\\for_me\\file_saved\\virus.txt', 'wb') as f1:
-        #f1.write(iv)
+        f1.write(iv)
         while True:
             data = f.read(2048)
             n = len(data)
@@ -60,7 +60,7 @@ def decode(event):
             'wb') as f1:
         fsz = os.path.getsize(str(path))
         while True:
-            data = f.read(2048)
+            data = f.read(1024)[16:]
             n = len(data)
             if n == 0:
                 break
