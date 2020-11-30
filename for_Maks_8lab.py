@@ -43,12 +43,7 @@ def start(event):
                 data += (' ' * (16 - n % 16)).encode()
             ciphertext = cipher.encrypt(data)
             f1.write(ciphertext)
-        # while True:
-        #     data = f.read()
-        #     if not data:
-        #         break
-        #     ciphertext = cipher.encrypt(data)
-        #     f1.write(ciphertext)
+
 
 start_button.bind('<Button-1>', start)
 
@@ -76,12 +71,6 @@ def decode(event):
             else:
                 f1.write(decodetext[:fsz])
             fsz -= n
-        # while True:
-        #     ciphertext = f.read()
-        #     if not ciphertext:
-        #         break
-        #     data = cipher.decrypt(ciphertext)
-        #     f1.write(data[16:])
 decode_button.bind('<Button-1>', decode)
 
 password_label.pack()
