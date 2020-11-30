@@ -4,9 +4,9 @@ from Crypto.Random import get_random_bytes
 import pickle
 
 S = [get_random_bytes(16) for i in range(0, 3)]
-D = {'user1': (S[0], hashlib.sha3_384(b'pass1' + S[0]).digest()),
-     'user2': (S[1], hashlib.sha3_384(b'pass2' + S[1]).digest()),
-     'user3': (S[2], hashlib.sha3_384(b'pass3' + S[2]).digest())}
+D = {'user1': (S[0], hashlib.sha3_256(b'pass1' + S[0]).digest()),
+     'user2': (S[1], hashlib.sha3_256(b'pass2' + S[1]).digest()),
+     'user3': (S[2], hashlib.sha3_256(b'pass3' + S[2]).digest())}
 with open("D:/password.pkl", 'wb') as f:
     pickle.dump(D, f)
 with open("D:/password.pkl", 'rb') as f:
@@ -27,11 +27,11 @@ b4 = Button(text='Change password')
 def login(event):
     with open("D:/password.pkl", 'rb') as f:
         D = pickle.load(f)
-    if D[e1.get()][1] == hashlib.sha3_384(bytes(e2.get(), 'ASCII') + D[e1.get()][0]).digest():
+    if D[e1.get()][1] == hashlib.sha3_256(bytes(e2.get(), 'ASCII') + D[e1.get()][0]).digest():
         l3['text'] = 'You are logged in'
         # b3.pack()
         SOLD = get_random_bytes(16)
-        NEW_PASS = (SOLD, hashlib.sha3_384(bytes(e2.get(), 'ASCII') + SOLD).digest())
+        NEW_PASS = (SOLD, hashlib.sha3_256(bytes(e2.get(), 'ASCII') + SOLD).digest())
         D[e1.get()] = NEW_PASS
         with open("D:/password.pkl", 'wb') as f:
             pickle.dump(D, f)
@@ -44,7 +44,7 @@ b1.bind('<Button-1>', login)
 
 def register(event):
     SOLD = get_random_bytes(16)
-    D[e1.get()] = (SOLD, hashlib.sha3_384(bytes(e2.get(), 'ASCII') + SOLD).digest())
+    D[e1.get()] = (SOLD, hashlib.sha3_256(bytes(e2.get(), 'ASCII') + SOLD).digest())
     with open("D:/password.pkl", 'wb') as f:
         pickle.dump(D, f)
 
@@ -55,9 +55,9 @@ b2.bind('<Button-1>', register)
 def change_password(event):
     with open("D:/password.pkl", 'rb') as f:
         D = pickle.load(f)
-    if D[e1.get()][1] == hashlib.sha3_384(bytes(e2.get(), 'ASCII') + D[e1.get()][0]).digest():
+    if D[e1.get()][1] == hashlib.sha3_256(bytes(e2.get(), 'ASCII') + D[e1.get()][0]).digest():
         SOLD = get_random_bytes(16)
-        D[e1.get()] = (SOLD, hashlib.sha3_384(bytes(e4.get(), 'ASCII') + SOLD).digest())
+        D[e1.get()] = (SOLD, hashlib.sha3_256(bytes(e4.get(), 'ASCII') + SOLD).digest())
         with open("D:/password.pkl", 'wb') as f:
             pickle.dump(D, f)
             l4['text'] = 'Вы успешно сменили пароль'
