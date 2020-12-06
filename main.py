@@ -49,6 +49,7 @@ def calculateEntropy(event):
     y = [zeros, ones]
     plt.xticks((0, 1))
     plt.bar((0, 1), y)
+    plt.title(u'Count bits')
     plt.show()
 
 
