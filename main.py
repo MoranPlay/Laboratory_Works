@@ -2,7 +2,6 @@ import math
 from tkinter import *
 from tkinter import filedialog as fd
 import matplotlib.pyplot as plt
-import numpy as np
 
 root = Tk()
 path = ''
@@ -28,6 +27,13 @@ def openFile(event):
 selectFileButton.bind('<Button-1>', openFile)
 
 
+def drawGraphics(x, y, title):
+    plt.xticks(x)
+    plt.bar(x, y)
+    plt.title(title)
+    plt.show()
+
+
 def calculateEntropy(event):
     zeros = 0
     ones = 0
@@ -47,10 +53,9 @@ def calculateEntropy(event):
     print(f"zeros {zeros}")
     print(f"ones {ones}")
     y = [zeros, ones]
-    plt.xticks((0, 1))
-    plt.bar((0, 1), y)
-    plt.title(u'Count bits')
-    plt.show()
+    x = (0, 1)
+    title = "Count bits"
+    drawGraphics(x, y, title)
 
 
 start_button.bind('<Button-1>', calculateEntropy)
