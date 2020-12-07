@@ -103,12 +103,13 @@ def monotoneCheck(y1):
     plt.hist(t)
     # plt.show()
 
+
 def minAAKF(y1):
     S = y1
     # for bits in y1:
     #     for bit in bits:
     #         S.append(int(bit))
-    print(S)
+    # print(S)
     S1 = S + S
 
     A = []
@@ -121,18 +122,18 @@ def minAAKF(y1):
 
     Data2 = {'Index': x,
              'AAKF': A}
-
+    entropy_label['text'] += f'\nmin AAKF = {min(A)}'
     df2 = DataFrame(Data2, columns=['Index', 'AAKF'])
     df2 = df2[['Index', 'AAKF']].groupby('Index').sum()
 
     window = Tk()
-    figure3 = plt.Figure(figsize=(5,4), dpi=100)
+    figure3 = plt.Figure(figsize=(5, 4), dpi=100)
     ax2 = figure3.add_subplot(111)
     line2 = FigureCanvasTkAgg(figure3, window)
     line2.get_tk_widget().pack()
     df2.plot(kind='line', legend=True, ax=ax2, color='r', marker='o', fontsize=10)
     ax2.set_title('AAKF')
-    #window.mainloop()
+    # window.mainloop()
 
 
 root.mainloop()
