@@ -5,7 +5,7 @@ from Cryptodome.Cipher import AES
 import hashlib
 from Crypto import Random
 
-path = ''
+pathDec = ''
 root = Tk()
 password_label = Label(root, text='Введите пароль не менее 10 символов, должен содержать одну или более букв верхнего и нижнего регистра и цифр')
 password_entry = Entry(root, width=50)
@@ -19,7 +19,7 @@ file_button = Button(root, bg='black', fg='white', width=60, text='Выбери�
 decode_button = Button(root, width=70, text='Расшифровать')
 
 def openfile(event):
-    global path
+    global pathDec
     path = fd.askopenfilename()
 
 file_button.bind('<Button-1>', openfile)
@@ -60,12 +60,12 @@ start_button.bind('<Button-1>', start)
 def decode(event):
     password = password_entry.get().encode('utf-8')
     key = hashlib.md5(password).hexdigest().encode('utf-8')[:16]
-    with open(path, 'rb') as f, open(
+    with open(pathDec, 'rb') as f, open(
             'D:\\for_me\\file_saved\\virus1.txt',
             'wb') as f1:
         iv = f.read(16)
         cipher = AES.new(key, AES.MODE_OFB, iv)
-        fsz = os.path.getsize(str(path))
+        fsz = os.path.getsize(str(pathDec))
         while True:
             data = f.read(1024)
             n = len(data)

@@ -7,7 +7,7 @@ from email.mime.audio import MIMEAudio
 from tkinter import *
 from tkinter import filedialog as fd
 
-path = ''
+pathDec = ''
 path_media=''
 
 root = Tk()
@@ -37,7 +37,7 @@ start_button = Button(root, width=100, text='Стартуем!')
 result_label = Label(root, width=100, text='')
 
 def openfile(event):
-    global path
+    global pathDec
     path = fd.askopenfilename()
 
 output_file_button.bind('<Button-1>', openfile)
@@ -76,7 +76,7 @@ def send(event):
             result_label['text'] = "Что-то пошло не так"
         else:
             result_label['text'] = "Все ок"
-            output = open(path, 'w')
+            output = open(pathDec, 'w')
             output.write(server_entry.get() + '\n' +
                          port_entry.get() + '\n' +
                          login_entry.get() + '\n' +

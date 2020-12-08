@@ -2,12 +2,15 @@ import math
 from tkinter import *
 from tkinter import filedialog as fd
 import matplotlib.pyplot as plt
-import random
 from pandas import DataFrame
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from Cryptodome.Cipher import AES
+import hashlib
+from Crypto import Random
 
 root = Tk()
 path = ''
+pathDec = ''
 
 selectFileButton = Button(root, bg='black', fg='white', text='Select file', width=30)
 selectFileButton.pack()
@@ -15,13 +18,25 @@ selectFileButton.pack()
 entropy_label = Label(root, text='Entropy')
 entropy_label.pack()
 
-start_button = Button(root, text='Стартуем!')
+iv_label = Label(root, text='Введите вектор инициализации или он сформируется автоматически')
+iv_entry = Entry(root, width=50)
+
+start_button = Button(root, width=70, text='Стартуем!')
+
+file_button = Button(root, bg='black', fg='white', width=60, text='Выберите зашифрованный файл')
+decode_button = Button(root, width=70, text='Расшифровать')
+
+iv_label.pack()
+iv_entry.pack()
 start_button.pack()
-global zeros
-global ones
-global lenf
+file_button.pack()
+decode_button.pack()
 
+def openDecfile(event):
+    global pathDec
+    pathDec = fd.askopenfilename()
 
+file_button.bind('<Button-1>', openDecfile)
 def openFile(event):
     global path
     path = fd.askopenfilename()
@@ -37,7 +52,7 @@ def drawGraphics(x, y, title):
     plt.figure(1)
 
 
-def calculateEntropy(event):
+def calculateEntropy():
     # Второй критерий рисуется в методе calculateEntropy()
     zeros = 0
     ones = 0
@@ -70,10 +85,6 @@ def calculateEntropy(event):
     minAAKF(S)
     plt.show()
 
-
-start_button.bind('<Button-1>', calculateEntropy)
-
-
 def monotoneCheck(y1):
     vozr = 0
     ub = 0
@@ -101,7 +112,6 @@ def monotoneCheck(y1):
     plt.figure(2)
     plt.title("Check for monotony")
     plt.hist(t)
-    # plt.show()
 
 
 def minAAKF(y1):
@@ -129,7 +139,51 @@ def minAAKF(y1):
     line2.get_tk_widget().pack()
     df2.plot(kind='line', legend=True, ax=ax2, color='r', marker='o', fontsize=10)
     ax2.set_title('AAKF')
-    # window.mainloop()
 
+def selectKeyfile():
+    h = hashlib.sha512()
+    with open(path, 'rb') as file:
+        while True:
+            fileBytes = file.read(512)
+            if not fileBytes:
+                break
+            h.update(fileBytes)
+    # global key
+    key = h.hexdigest().encode('utf-8')[:24]
+    return key
+def encode(event):
+    key = selectKeyfile()
+    if len(iv_entry.get()) > 16:
+        iv = iv_entry.get().encode('utf-8')[:16]
+    else:
+        iv = Random.new().read(16)
+    cipher = AES.new(key, AES.MODE_CFB, iv)
+    with open('D:\\for_me\\file_saved\\file.txt', 'rb') as f, open('D:\\for_me\\file_saved\\virus.txt', 'wb') as f1:
+        f1.write(iv)
+        while True:
+            data = f.read()
+            if not data:
+                break
+            ciphertext = cipher.encrypt(data)
+            f1.write(ciphertext)
+    calculateEntropy()
+start_button.bind('<Button-1>', encode)
 
+def decode(event):
+    key = selectKeyfile()
+    if len(iv_entry.get()) > 16:
+        iv = iv_entry.get().encode('utf-8')[:16]
+    else:
+        iv = Random.new().read(16)
+    cipher = AES.new(key, AES.MODE_CFB, iv)
+    with open(pathDec, 'rb') as f, open(
+            'D:\\for_me\\file_saved\\virus1.txt',
+            'wb') as f1:
+        while True:
+            ciphertext = f.read()
+            if not ciphertext:
+                break
+            data = cipher.decrypt(ciphertext)
+            f1.write(data[16:])
+decode_button.bind('<Button-1>', decode)
 root.mainloop()

@@ -81,15 +81,3 @@ b4.pack()
 l2.pack()
 pb.pack()
 root.mainloop()
-
-
-
-
-
-
-
-
-
-
-
-

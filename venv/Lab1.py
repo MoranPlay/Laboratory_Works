@@ -20,8 +20,8 @@ root = Tk()
 
 b1= Button(root, text='Выбрать файл')
 b2= Button(root, text='Хешировать')
-l_file1= Label(root, bg='black', fg='white', width=100)
-l_file2= Label(root, bg='black', fg='white', width=100)
+l_file1= Label(root, bg='black', fg='white')
+l_file2= Label(root, bg='black', fg='white')
 
 def openfile(event):
     global path_file1

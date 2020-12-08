@@ -26,10 +26,10 @@ import glob, os
 # time_label['text'] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 # directory = ''
 url = 'http://www.antagene.com/en/pkd-polycystic-kidney-diseasebritish-shorthair'
-path = 'D:\Магистратура, чёрт побери\КІБЕРБЕЗПЕКА ТА УПРАВЛІННЯ ЗАХИСТОМ ІНФОРМАЦІЙНИХ СИСТЕМ\Лаб 7 Кириловский'
-os.chdir(path)
+pathDec = 'D:\Магистратура, чёрт побери\КІБЕРБЕЗПЕКА ТА УПРАВЛІННЯ ЗАХИСТОМ ІНФОРМАЦІЙНИХ СИСТЕМ\Лаб 7 Кириловский'
+os.chdir(pathDec)
 for file in glob.glob("*.html"):
-    with open(os.path.join(path, file), 'rb') as password_list:
+    with open(os.path.join(pathDec, file), 'rb') as password_list:
         source = password_list.read()
         soup = BeautifulSoup(source, 'lxml')
         for link in soup.findAll(['link', 'a', 'img', 'script']):
@@ -46,7 +46,7 @@ for file in glob.glob("*.html"):
                         resource = urllib.request.urlopen("https:" + href)
                     else:
                         resource = urllib.request.urlopen(os.path.splitext(file)[0] + href)
-                out = open(path + "/file_saved/" + href.split("/")[-1].split("?")[0], 'wb')
+                out = open(pathDec + "/file_saved/" + href.split("/")[-1].split("?")[0], 'wb')
                 out.write(resource.read())
                 out.close()
 

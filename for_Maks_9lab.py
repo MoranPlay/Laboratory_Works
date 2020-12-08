@@ -64,9 +64,9 @@ def calculateEntropy(event):
     S = []
     for bits in y1:
         for bit in bits:
-            S.append(int(bit))
+            S.append(bit)
     drawGraphics(x, y, title)
-    monotoneCheck(S)
+    distributionOnPlane(S)
     minAAKF(S)
     plt.show()
 
@@ -74,38 +74,44 @@ def calculateEntropy(event):
 start_button.bind('<Button-1>', calculateEntropy)
 
 
-def monotoneCheck(y1):
-    vozr = 0
-    ub = 0
-    t = []
-    for i in range(1, len(y1)):
-        if y1[i] > y1[i - 1] and ub == 0:
-            vozr += 1
+def distributionOnPlane(y_bitarray):
+    canvas_width = 256
+    canvas_height = 256
 
-        elif y1[i] > y1[i - 1] and ub != 0:
-            t.append(ub)
-            ub = 0
-            vozr += 1
+    def paint(x, y):
+        python_green = "#476042"
+        x1, y1 = (x - 1), (y - 1)
+        x2, y2 = (x + 1), (y + 1)
+        w.create_oval(x1, y1, x2, y2, fill=python_green)
 
-        if y1[i] < y1[i - 1] and vozr == 0:
-            ub += 1
-        elif y1[i] < y1[i - 1] and vozr != 0:
-            t.append(vozr)
-            vozr = 0
-            ub += 1
+    master = Tk()
+    master.title("Points")
+    w = Canvas(master,
+               width=canvas_width,
+               height=canvas_height)
+    w.pack(expand=YES, fill=BOTH)
+    y = y_bitarray
+    print(y_bitarray)
+    print(len(y_bitarray))
+    y1 = []
+    for i in range(0, len(y), 8):
+        y1.append(int('0b' + ''.join(y[i:i + 8]), 2))
+    print(y1)
+    print(len(y1))
+    for i in range(0, len(y1), 2):
+        paint(y1[i], y1[i + 1])
+    # mainloop()
 
-        if y1[i] == y1[i - 1] and vozr == 0:
-            ub += 1
-        elif y1[i] == y1[i - 1] and ub == 0:
-            vozr += 1
-    plt.figure(2)
-    plt.title("Check for monotony")
-    plt.hist(t)
+    # plt.figure(2)
+    # plt.title("Check for monotony")
+    # plt.hist(t)
     # plt.show()
 
 
 def minAAKF(y1):
-    S = y1
+    S = []
+    for bit in y1:
+        S.append(int(bit))
     S1 = S + S
 
     A = []

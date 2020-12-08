@@ -6,7 +6,7 @@ from ftplib import FTP
 from itertools import product
 from tkinter.ttk import Progressbar
 from time import sleep
-path=''
+pathDec= ''
 path_dictionary=''
 root = Tk()
 l_server=Label(root, text='Введите адрес FTP сервера')
