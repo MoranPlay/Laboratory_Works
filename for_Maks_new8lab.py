@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from Cryptodome.Cipher import AES
 import hashlib
 from Crypto import Random
+import os
 
 root = Tk()
 path = ''
@@ -79,43 +80,44 @@ def calculateEntropy():
     S = []
     for bits in y1:
         for bit in bits:
-            S.append(int(bit))
+            S.append(bit)
     drawGraphics(x, y, title)
-    monotoneCheck(S)
+    distributionOnPlane(S)
     minAAKF(S)
     plt.show()
 
-def monotoneCheck(y1):
-    vozr = 0
-    ub = 0
-    t = []
-    for i in range(1, len(y1)):
-        if y1[i] > y1[i - 1] and ub == 0:
-            vozr += 1
+def distributionOnPlane(y_bitarray):
+    canvas_width = 256
+    canvas_height = 256
 
-        elif y1[i] > y1[i - 1] and ub != 0:
-            t.append(ub)
-            ub = 0
-            vozr += 1
+    def paint(x, y):
+        python_green = "#476042"
+        x1, y1 = (x - 1), (y - 1)
+        x2, y2 = (x + 1), (y + 1)
+        w.create_oval(x1, y1, x2, y2, fill=python_green)
 
-        if y1[i] < y1[i - 1] and vozr == 0:
-            ub += 1
-        elif y1[i] < y1[i - 1] and vozr != 0:
-            t.append(vozr)
-            vozr = 0
-            ub += 1
-
-        if y1[i] == y1[i - 1] and vozr == 0:
-            ub += 1
-        elif y1[i] == y1[i - 1] and ub == 0:
-            vozr += 1
-    plt.figure(2)
-    plt.title("Check for monotony")
-    plt.hist(t)
+    master = Tk()
+    master.title("Points")
+    w = Canvas(master,
+               width=canvas_width,
+               height=canvas_height)
+    w.pack(expand=YES, fill=BOTH)
+    y = y_bitarray
+    print(y_bitarray)
+    print(len(y_bitarray))
+    y1 = []
+    for i in range(0, len(y), 8):
+        y1.append(int('0b' + ''.join(y[i:i + 8]), 2))
+    print(y1)
+    print(len(y1))
+    for i in range(0, len(y1), 2):
+        paint(y1[i], y1[i + 1])
 
 
 def minAAKF(y1):
-    S = y1
+    S = []
+    for bit in y1:
+        S.append(int(bit))
     S1 = S + S
 
     A = []
@@ -148,8 +150,7 @@ def selectKeyfile():
             if not fileBytes:
                 break
             h.update(fileBytes)
-    # global key
-    key = h.hexdigest().encode('utf-8')[:24]
+    key = h.hexdigest().encode('utf-8')[:16]
     return key
 def encode(event):
     key = selectKeyfile()
@@ -157,13 +158,16 @@ def encode(event):
         iv = iv_entry.get().encode('utf-8')[:16]
     else:
         iv = Random.new().read(16)
-    cipher = AES.new(key, AES.MODE_CFB, iv)
+    cipher = AES.new(key, AES.MODE_OFB, iv)
     with open('D:\\for_me\\file_saved\\file.txt', 'rb') as f, open('D:\\for_me\\file_saved\\virus.txt', 'wb') as f1:
         f1.write(iv)
         while True:
-            data = f.read()
-            if not data:
+            data = f.read(1024)
+            n = len(data)
+            if n == 0:
                 break
+            elif n % 16 != 0:
+                data += (' ' * (16 - n % 16)).encode()
             ciphertext = cipher.encrypt(data)
             f1.write(ciphertext)
     calculateEntropy()
@@ -171,19 +175,23 @@ start_button.bind('<Button-1>', encode)
 
 def decode(event):
     key = selectKeyfile()
-    if len(iv_entry.get()) > 16:
-        iv = iv_entry.get().encode('utf-8')[:16]
-    else:
-        iv = Random.new().read(16)
-    cipher = AES.new(key, AES.MODE_CFB, iv)
     with open(pathDec, 'rb') as f, open(
             'D:\\for_me\\file_saved\\virus1.txt',
             'wb') as f1:
+        iv = f.read(16)
+        cipher = AES.new(key, AES.MODE_OFB, iv)
+        fsz = os.path.getsize(str(pathDec))
         while True:
-            ciphertext = f.read()
-            if not ciphertext:
+            data = f.read(1024)
+            n = len(data)
+            if n == 0:
                 break
-            data = cipher.decrypt(ciphertext)
-            f1.write(data[16:])
+            decodetext = cipher.decrypt(data)
+            n = len(decodetext)
+            if fsz > n:
+                f1.write(decodetext)
+            else:
+                f1.write(decodetext[:fsz])
+            fsz -= n
 decode_button.bind('<Button-1>', decode)
 root.mainloop()

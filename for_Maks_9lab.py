@@ -100,13 +100,6 @@ def distributionOnPlane(y_bitarray):
     print(len(y1))
     for i in range(0, len(y1), 2):
         paint(y1[i], y1[i + 1])
-    # mainloop()
-
-    # plt.figure(2)
-    # plt.title("Check for monotony")
-    # plt.hist(t)
-    # plt.show()
-
 
 def minAAKF(y1):
     S = []
