@@ -98,8 +98,12 @@ def distributionOnPlane(y_bitarray):
         y1.append(int('0b' + ''.join(y[i:i + 8]), 2))
     print(y1)
     print(len(y1))
-    for i in range(0, len(y1), 2):
-        paint(y1[i], y1[i + 1])
+    if len(y1)%2 == 0:
+        for i in range(0, len(y1), 2):
+            paint(y1[i], y1[i + 1])
+    else:
+        for i in range(0, len(y1)-1, 2):
+            paint(y1[i], y1[i + 1])
 
 def minAAKF(y1):
     S = []
